@@ -1,0 +1,2 @@
+class PveServerHttpResponseError(Exception):
+    pass

@@ -1,0 +1,5 @@
+pydantic
+pytest
+requests
+urllib3
+loguru
