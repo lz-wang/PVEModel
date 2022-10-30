@@ -132,3 +132,4 @@ dmypy.json
 .idea
 .vscode
 .DS_Store
+/secret_test.json
