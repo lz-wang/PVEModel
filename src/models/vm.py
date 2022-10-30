@@ -2,6 +2,8 @@ from typing import Optional, Any, Dict
 
 from pydantic import BaseModel
 
+from .report import VMReport
+
 
 class VMBlock(BaseModel):
     failed_rd_operations: int
@@ -42,24 +44,24 @@ class VMStatus(BaseModel):
     status: str
     qmpstatus: str
     uptime: int
+    cpus: int
     cpu: float
+    maxmem: int
     mem: int
+    maxdisk: int
     disk: int
     diskread: int
     diskwrite: int
-    blockstat: Optional[Dict[str, VMBlock]]
     netin: int
     netout: int
     pid: Optional[int]
-    cpus: int
-    maxmem: int
-    maxdisk: int
+    ha: dict
     running_machine: str = ''  # need update by raw dict
     running_qemu: str = ''  # need update by raw dict
     proxmox_support: dict = ''  # need update by raw dict
     ballooninfo: Optional[dict]
-    ha: dict
     nics: Optional[dict]
+    blockstat: Optional[Dict[str, VMBlock]]
 
 
 class PVEVm(BaseModel):
@@ -130,3 +132,24 @@ class PVEVm(BaseModel):
 
     def vm_resume(self):
         return self._change_status('resume')
+
+    def get_report(self) -> VMReport:
+        vm = self.get_status()
+        return VMReport(
+            type='VM',
+            vm_id=vm.vmid,
+            qm_status=vm.qmpstatus,
+            name=self.name,
+            status=vm.status,
+            uptime=int(vm.uptime),
+            cpu_total=int(vm.cpus),
+            cpu_used=round(vm.cpus * vm.cpu, 2),
+            mem_total=int(vm.maxmem),
+            mem_used=int(vm.mem),
+            disk_total=int(vm.maxdisk),
+            disk_used=int(vm.disk),
+            disk_read=int(vm.diskread),
+            disk_write=int(vm.diskwrite),
+            net_in=int(vm.netin),
+            net_out=int(vm.netout)
+        )

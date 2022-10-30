@@ -2,6 +2,7 @@ from typing import Optional, Any, List
 
 from pydantic import BaseModel
 
+from .report import NodeReport
 from .vm import PVEVm
 
 
@@ -144,3 +145,18 @@ class PVENode(BaseModel):
             dev['net_out'] = dev['out']
             result.append(NodeNetStats(**dev))
         return result
+
+    def get_report(self) -> NodeReport:
+        return NodeReport(
+            type='NODE',
+            name=self.node,
+            status=self.status,
+            uptime=int(self.uptime),
+            cpu_total=int(self.maxcpu),
+            cpu_used=round(self.maxcpu * self.cpu, 2),
+            mem_total=int(self.maxmem),
+            mem_used=int(self.mem),
+            disk_total=int(self.maxdisk),
+            disk_used=int(self.disk),
+            vm_active_number=len(self.get_netstat())
+        )
