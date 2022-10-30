@@ -64,7 +64,7 @@ class VMStatus(BaseModel):
     blockstat: Optional[Dict[str, VMBlock]]
 
 
-class PVEVm(BaseModel):
+class PVEVM(BaseModel):
     vmid: int
     name: str
     status: str

@@ -3,7 +3,7 @@ from typing import Optional, Any, List
 from pydantic import BaseModel
 
 from .report import NodeReport
-from .vm import PVEVm
+from .vm import PVEVM
 
 
 class DigestData(BaseModel):
@@ -97,8 +97,8 @@ class PVENode(BaseModel):
     cpu: float
     mem: int
     disk: int
-    ssl_fingerprint: str
     level: str
+    ssl_fingerprint: Optional[str]
     client: Optional[Any]
 
     def get_containers(self):
@@ -109,7 +109,7 @@ class PVENode(BaseModel):
         """获取节点的 QEMU 虚拟机信息"""
         vms = self.client.http_request('GET', f'/nodes/{self.node}/qemu')
         vms = [{**v, **{'client': self.client, 'node': self}} for v in vms]
-        return [PVEVm(**vm) for vm in sorted(vms, key=lambda v: v.get('vmid', 0))]
+        return [PVEVM(**vm) for vm in sorted(vms, key=lambda v: v.get('vmid', 0))]
 
     def get_status(self):
         """获取节点的状态"""

@@ -6,7 +6,7 @@ from loguru import logger as log
 
 from src.client import PVEClient
 from src.models.node import PVENode
-from src.models.vm import PVEVm
+from src.models.vm import PVEVM
 from src.utils import pretty_time_delta, pretty_file_size
 
 pve: PVEClient
@@ -17,6 +17,15 @@ def setup():
     with open('../secret_test.json', 'r') as f:
         cred = json.load(f)
     pve = PVEClient(**cred)
+
+
+def test_cluster():
+    cluster = pve.get_cluster()
+    cluster_status = cluster.get_status()
+    cluster_tasks = cluster.get_tasks()
+    cluster_resources = cluster.get_resource()
+    cluster_log = cluster.get_log(25)
+    pass
 
 
 def test_get_status():
@@ -72,7 +81,7 @@ def vm_action(pve_node: PVENode):
                 pve_vm.vm_resume()
 
 
-def make_cpu_data(vm: PVEVm):
+def make_cpu_data(vm: PVEVM):
     for _ in range(60):
         vm_status = vm.get_status()
         print(f'"{round(vm_status.cpu, 4)}"', end=', ')
