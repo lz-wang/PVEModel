@@ -105,13 +105,13 @@ class PVENode(BaseModel):
         """获取节点的 LXC 容器信息 https://linuxcontainers.org/"""
         pass
 
-    def get_vms(self):
+    def get_vms(self) -> List[PVEVM]:
         """获取节点的 QEMU 虚拟机信息"""
         vms = self.client.http_request('GET', f'/nodes/{self.node}/qemu')
         vms = [{**v, **{'client': self.client, 'node': self}} for v in vms]
         return [PVEVM(**vm) for vm in sorted(vms, key=lambda v: v.get('vmid', 0))]
 
-    def get_status(self):
+    def get_status(self) -> NodeStatus:
         """获取节点的状态"""
         data = self.client.http_request('GET', f'/nodes/{self.node}/status')
         return NodeStatus(**data)
@@ -126,17 +126,17 @@ class PVENode(BaseModel):
             result.append(NodeDisk(**disk))
         return result
 
-    def get_time(self):
+    def get_time(self) -> NodeTime:
         """获取节点的时间或时区信息"""
         data = self.client.http_request('GET', f'/nodes/{self.node}/time')
         return NodeTime(**data)
 
-    def get_host(self):
+    def get_host(self) -> DigestData:
         """获取节点的host信息"""
         data = self.client.http_request('GET', f'/nodes/{self.node}/hosts')
         return DigestData(**data)
 
-    def get_netstat(self):
+    def get_netstat(self) -> List[NodeNetStats]:
         """获取节点下所有虚机/容器的网络信息"""
         data = self.client.http_request('GET', f'/nodes/{self.node}/netstat')
         result = []

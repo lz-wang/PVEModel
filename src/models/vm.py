@@ -85,7 +85,7 @@ class PVEVM(BaseModel):
     client: Optional[Any]
     node: Optional[Any]
 
-    def get_status(self):
+    def get_status(self) -> VMStatus:
         sub_url = f'/nodes/{self.node.node}/qemu/{self.vmid}/status/current'
         data = self.client.http_request('GET', sub_url)
         vm_status = VMStatus(**data)
@@ -95,42 +95,39 @@ class PVEVM(BaseModel):
 
         return vm_status
 
-    def is_started(self):
+    def is_started(self) -> bool:
         return self.get_status().status == "running"
 
-    def is_stopped(self):
+    def is_stopped(self) -> bool:
         return self.get_status().status == "stopped"
 
-    def is_running(self):
+    def is_running(self) -> bool:
         return self.get_status().status == "running" and self.get_status().qmpstatus == "running"
 
-    def is_paused(self):
+    def is_paused(self) -> bool:
         return self.get_status().qmpstatus == "paused"
 
-    def _change_status(self, status: str):
-        cur_status = self.get_status().status
-        # log.warning(f'[VM_id={self.vmid}][{self.name}] changing status: {cur_status} -> {status}')
+    def _change_status(self, status: str) -> dict:
         sub_url = f'/nodes/{self.node.node}/qemu/{self.vmid}/status/{status}'
-        resp = self.client.http_request('POST', sub_url)
-        # log.success(f'[VM_id={self.vmid}][{self.name}] change status OK, resp={resp}')
-        return resp
+        resp_data = self.client.http_request('POST', sub_url)
+        return resp_data
 
-    def vm_reboot(self):
+    def vm_reboot(self) -> dict:
         return self._change_status('reboot')
 
-    def vm_start(self):
+    def vm_start(self) -> dict:
         return self._change_status('start')
 
-    def vm_stop(self):
+    def vm_stop(self) -> dict:
         return self._change_status('stop')
 
-    def vm_shutdown(self):
+    def vm_shutdown(self) -> dict:
         return self._change_status('shutdown')
 
-    def vm_suspend(self):
+    def vm_suspend(self) -> dict:
         return self._change_status('suspend')
 
-    def vm_resume(self):
+    def vm_resume(self) -> dict:
         return self._change_status('resume')
 
     def get_report(self) -> VMReport:

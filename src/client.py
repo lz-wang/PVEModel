@@ -53,7 +53,7 @@ class PVEClient(object):
         else:
             raise PveServerHttpResponseError(f'code={resp.status_code}, text={resp.text}')
 
-    def _refresh_cookies(self):
+    def _refresh_cookies(self) -> None:
         data = dict(username=f'{self.username}@{self.realm}', password=self.password)
         resp_data = self.http_request('POST', '/access/ticket', data, auth=False)
         self.cookies_time = datetime.datetime.now()

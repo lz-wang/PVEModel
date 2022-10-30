@@ -7,7 +7,7 @@ def pretty_time_delta(seconds: int | float) -> str:
     return f'{days}days, {hours}hours, {minutes}minutes, {seconds_}seconds'
 
 
-def pretty_file_size(file_size: int | float, base: int = 1024):
+def pretty_file_size(file_size: int | float, base: int = 1024) -> str:
     units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB', 'BB', 'NB']
     level = 0
 
