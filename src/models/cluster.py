@@ -18,12 +18,7 @@ class ClusterNodes(BaseModel):
 
 
 class ClusterStatus(BaseModel):
-    type: str
-    id: str
-    name: str
     nodes: List[ClusterNodes]
-    version: int
-    quorate: bool
 
 
 class ClusterTask(BaseModel):
@@ -90,7 +85,8 @@ class PVECluster(ClusterStatus):
     client: Optional[Any]
 
     def get_status(self) -> ClusterStatus:
-        return ClusterStatus(**(self.client.get_cluster().dict()))
+        status = self.client.get_cluster().dict()
+        return ClusterStatus(**status)
 
     def get_tasks(self) -> List[ClusterTask]:
         data = self.client.http_request('GET', '/cluster/tasks')

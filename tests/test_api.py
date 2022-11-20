@@ -43,7 +43,7 @@ def test_get_status():
                  f'disk_used={pretty_file_size(float(node.disk))}')
         vms_net = node.get_netstat()
         for vm_net in vms_net:
-            log.info(f'VM: ID={vm_net.vmid}, '
+            log.info(f'VM: ID={vm_net.vmid}, device={vm_net.dev}, '
                      f'net_in={pretty_file_size(float(vm_net.net_in))},'
                      f'net_out={pretty_file_size(float(vm_net.net_out))}')
 
